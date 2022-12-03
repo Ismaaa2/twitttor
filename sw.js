@@ -1,6 +1,6 @@
-const STATIC_CACHE = "static-v3";
-const DYNAMIC_CACHE = "dynamic-v1";
-const INMUTABLE_CACHE = "inmutable-v2";
+const STATIC_CACHE = "static-v4";
+const DYNAMIC_CACHE = "dynamic-v2";
+const INMUTABLE_CACHE = "inmutable-v3";
 
 const APP_SHELL = [
   // "/",
@@ -37,13 +37,17 @@ self.addEventListener("install", (e) => {
 });
 
 self.addEventListener("activate", (e) => {
-  caches.keys().then((keys) => {
+  const resp = caches.keys().then((keys) => {
     keys.forEach((key) => {
-      if (key !== STATIC_CACHE && key.includes("static")) {
+      if (
+        (key !== STATIC_CACHE && key.includes("static")) ||
+        (key !== DYNAMIC_CACHE && key.includes("dynamic"))
+      ) {
         caches.delete(key);
       }
     });
   });
+  e.waitUntil(resp);
 });
 
 self.addEventListener("fetch", (e) => {
